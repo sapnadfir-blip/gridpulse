@@ -1,7 +1,8 @@
 # GridPulse ⚡
 ### Breaking Smart Grid Protection via IEC 62351 Cryptographic Exhaustion (CIL-DoS)
 
-[![Status: Under Review](https://img.shields.io/badge/IEEE%20Transactions%20on%20Smart%20Grid-Under%20Review%20(Submitted%20Oct%207%2C%202026)-blueviolet.svg)](#citation)
+[![CI](https://github.com/sapnadfir-blip/gridpulse/actions/workflows/ci.yml/badge.svg)](https://github.com/sapnadfir-blip/gridpulse/actions)
+[![Research: IEEE TSG (Under Review)](https://img.shields.io/badge/Research-IEEE%20TSG%20(Under%20Review)-blueviolet.svg)](#citation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](pyproject.toml)
 [![C Standard: C99](https://img.shields.io/badge/C-C99-orange.svg)](gridpulse/hardware/)
@@ -9,12 +10,16 @@
 [![Hardware: ESP32 / Arduino](https://img.shields.io/badge/Hardware-ESP32%20%2F%20Arduino-red.svg)](gridpulse/hardware/esp32_crypto_bench/)
 
 > **GridPulse** is an open-source cybersecurity and power-system research toolkit demonstrating **Crypto-Induced Latency Denial of Service (CIL-DoS)** in IEC 61850 / IEC 62351 digital substations. It models the cyber-to-physical failure chain (generator rotor angle instability and transformer thermal stress), provides real embedded silicon benchmarks (Arduino / ESP32), benchmarks NIST Post-Quantum Cryptography (PQC), and deploys the **Priority Queue Admission Controller (PQAC)** defense.
->
-> 📄 **Research Paper:** *Crypto-Induced Latency Denial of Service in IEC 61850 Substation Communications: Cyber-Physical Impact Analysis, Priority Admission Defense, and Post-Quantum Evaluation*  
-> 🏛️ **Affiliation:** Department of Computer Science and Engineering, PES University, Bengaluru, India  
-> 📬 **Status:** Submitted and **Under Review** in *IEEE Transactions on Smart Grid* (Submitted October 7, 2026).
 
-⚠️ **Notice:** This repository is published strictly for authorized academic security research, defensive testing, and utility engineering validation.
+```bash
+# ⚡ 30-Second Quick Demo (Substation Process Bus Docker Environment)
+git clone https://github.com/sapnadfir-blip/gridpulse.git && cd gridpulse/gridpulse/hardware
+docker compose run --rm subscriber --mode priority   # Terminal 1: Run PQAC-Protected Relay (Trip < 1ms)
+docker compose run --rm attacker --rate 100000       # Terminal 2: Flood 100K pps CIL-DoS attack
+```
+
+> [!WARNING]
+> **Authorized Defensive Research Only:** GridPulse is published strictly for academic research, defensive benchmarking, and electric utility verification in isolated laboratory test environments. Do not deploy against live or production operational technology (OT) infrastructure.
 
 ---
 
@@ -145,7 +150,7 @@ To eliminate reliance on synthetic desktop simulations, cryptographic operations
   <img src="docs/figures/fig9_transient_stability.png" width="85%" alt="Transient Stability under CIL-DoS"/>
 </p>
 
-* **Equal-Area Criterion Derivation:** For a 3-phase bolted fault ($P_e = 0$), Critical Clearing Time is $t_{\text{crit}} \approx 201.6$\,ms under base inertia ($H=5.0$\,s, $P_m=0.8$\,p.u.), dropping to $\approx 120$\,ms in low-inertia renewable grids ($H=2.5$\,s, $P_m=0.95$\,p.u.).
+* **Equal-Area Criterion Derivation:** For a 3-phase bolted fault ($P_e = 0$), Critical Clearing Time is $t_{\text{crit}} \approx 201.6$ ms under base inertia ($H = 5.0$ s, $P_m = 0.8$ p.u.), dropping to $\approx 120$ ms in low-inertia renewable grids ($H = 2.5$ s, $P_m = 0.95$ p.u.).
 * **Transformer Damage:** Under delayed backup clearing (350 ms), transformer through-fault thermal energy surges by **6.25× ($I^2 t$)** under IEEE Std C57.109-2018, causing severe 120 Hz Lorentz mechanical winding deformation.
 
 ### 3. NIST Post-Quantum Cryptography (PQC) Evaluation
@@ -171,11 +176,11 @@ We benchmarked official NIST quantum-resistant standards (**FIPS 204 ML-DSA** an
   <img src="docs/figures/fig2_deadline_miss.png" width="48%" alt="Deadline Miss Ratio"/>
 </p>
 
-PQAC sits between the network interface and cryptographic verification workers, executing $O(1)$ triage in $<0.2\,\mu$s per frame:
+PQAC sits between the network interface and cryptographic verification workers, executing $O(1)$ triage in $< 0.2$ µs per frame:
 1. **Stage 1 (MAC Allowlist):** Cross-references source MAC against pre-provisioned Substation Configuration Description (SCD) allowlists.
 2. **Stage 2 (RFC 1982 Serial Arithmetic & Transition Gating):** Evaluates state transitions ($\Delta = F.\text{stNum} \ominus \text{last\_verified\_st}$) within a bounded plausibility window ($W=16$), gated by a transition token bucket ($B_{\text{trans}}$).
 3. **Stage 3 (Verify-Before-Commit):** Trusted state counter $S_{\text{ver}}[\text{mac}]$ is updated **only after successful signature verification**, preventing state poisoning and trip suppression attacks.
-4. **Results:** Achieves up to **$3,140\times$ latency reduction** on Cortex-A9 relay profiles (2,388 ms $\to$ 760 $\mu$s, **0.00% deadline miss** across 49 controlled experiments).
+4. **Results:** Achieves up to **$3,140\times$ latency reduction** on Cortex-A9 relay profiles (2,388 ms $\to$ 760 µs, **0.00% deadline miss** across 49 controlled experiments).
 
 ---
 
@@ -228,8 +233,9 @@ source .venv/bin/activate
 # Install in editable mode
 pip install -e .
 
-# Run test suite
-pytest tests/
+# Run test suite & verify experimental datasets
+make test
+make reproduce
 ```
 
 ### 2. Run the Live Interactive Demo Dashboard
@@ -261,7 +267,7 @@ docker compose run --rm subscriber --mode fifo --attack-rate 100000 --duration 2
 
 ---
 
-## 📄 Academic Research Paper
+## 📄 Academic Research Paper & Citation <a name="citation"></a>
 
 This work is detailed in our manuscript submitted to the **IEEE Transactions on Smart Grid**:
 

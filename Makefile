@@ -1,30 +1,30 @@
-.PHONY: xdp-build xdp-attach xdp-detach test bench clean install
+.PHONY: help build test reproduce clean
 
-xdp-build:
-	@echo "Building XDP program..."
-	clang -O2 -g -Wall -target bpf -c gridpulse/defense/xdp/filter.c -o gridpulse/defense/xdp/filter.o
+help:
+	@echo "GridPulse - Research & Testbed Makefile"
+	@echo "  make build      - Compile native C substation binaries (OpenSSL required)"
+	@echo "  make test       - Run Python test suite via pytest"
+	@echo "  make reproduce  - Validate and print summary of experimental results from results/"
+	@echo "  make clean      - Remove build artifacts and temporary files"
 
-xdp-attach:
-	@echo "Attaching XDP program to interface (requires IFACE environment variable)..."
-	@if [ -z "$(IFACE)" ]; then echo "IFACE is not set. Usage: make xdp-attach IFACE=eth0"; exit 1; fi
-	sudo ip link set dev $(IFACE) xdp obj gridpulse/defense/xdp/filter.o sec xdp
-
-xdp-detach:
-	@echo "Detaching XDP program from interface..."
-	@if [ -z "$(IFACE)" ]; then echo "IFACE is not set. Usage: make xdp-detach IFACE=eth0"; exit 1; fi
-	sudo ip link set dev $(IFACE) xdp off
+build:
+	@echo "==> Compiling native C binaries..."
+	gcc -O2 -pthread -Wall -o gridpulse/hardware/goose_subscriber gridpulse/hardware/goose_subscriber.c -lssl -lcrypto
+	gcc -O2 -Wall -o gridpulse/hardware/goose_attacker gridpulse/hardware/goose_attacker.c
+	gcc -O2 -pthread -Wall -o gridpulse/hardware/goose_publisher gridpulse/hardware/goose_publisher.c -lssl -lcrypto
+	gcc -O2 -Wall -o gridpulse/hardware/crypto_bench gridpulse/hardware/crypto_bench.c -lssl -lcrypto
+	@echo "==> Native binaries successfully compiled in gridpulse/hardware/"
 
 test:
-	pytest tests/
+	@echo "==> Running test suite..."
+	pytest tests/ -v
 
-bench:
-	python3 -m gridpulse.bench.benchmark
+reproduce:
+	@echo "==> Verifying experimental dataset provenance and benchmarks..."
+	@python3 scripts/verify_results.py
 
 clean:
-	rm -rf .pytest_cache
+	@echo "==> Cleaning build artifacts..."
+	rm -f gridpulse/hardware/goose_subscriber gridpulse/hardware/goose_attacker gridpulse/hardware/goose_publisher gridpulse/hardware/crypto_bench
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.o" -delete
-
-install:
-	pip install -e .[test]
+	find . -type d -name ".pytest_cache" -exec rm -rf {} +

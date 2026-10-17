@@ -143,10 +143,10 @@ stateDiagram-v2
 ```
 
 ### Mathematical Proofs Summary
-* **Theorem 1 (Queue Stability):** With an aggregate Class $H$ cap $\Lambda_H^{\max} \le 500$\,pps, the high-priority protection queue is unconditionally stable ($\rho_H < 1$) across all attack rates:
-  $$\rho_H = \frac{\lambda_H}{\mu} \le \frac{\Lambda_H^{\max}}{\mu} = \frac{500}{1,745} \approx 0.286 < 1 \quad \text{(ARM Cortex-A9 relay)}$$
+* **Theorem 1 (Queue Stability):** With an aggregate Class $H$ cap $\Lambda_H^{\max} \le 500$ pps, the high-priority protection queue is unconditionally stable ($\rho_H < 1$) across all attack rates:
+  $$\rho_H = \frac{\lambda_H}{\mu} \le \frac{\Lambda_H^{\max}}{\mu} = \frac{500}{1{,}745} \approx 0.286 < 1 \quad \text{(ARM Cortex-A9 relay)}$$
 * **Theorem 3 (Worst-Case Trip Latency Bound):** For an admitted trip frame arriving during steady-state CIL-DoS flood with $Q_H = 0$:
-  $$T_{\text{trip}} \le t_{\text{ingest}} + S_{\max} + \overline{S} + t_{\text{logic}} \le 1\,\mu\text{s} + 573\,\mu\text{s} + 573\,\mu\text{s} + 50\,\mu\text{s} = 1{,}197\,\mu\text{s} \approx 1.20\,\text{ms} < 3.0\,\text{ms}$$
+  $$T_{\text{trip}} \le t_{\text{ingest}} + S_{\max} + \overline{S} + t_{\text{logic}} \le 1\,\mu\text{s} + 573\,\mu\text{s} + 573\,\mu\text{s} + 50\,\mu\text{s} = 1{,}197\,\mu\text{s} \approx 1.20\text{ ms} < 3.0\text{ ms}$$
 
 ---
 

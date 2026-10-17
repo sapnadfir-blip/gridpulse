@@ -106,13 +106,12 @@ Attacker generates GOOSE frames:
 
 ---
 
-## Responsible Use Statement
+## Responsible Disclosure & Authorized Use Policy
 
-GridPulse is a research tool for authorized security testing of
-IEC 61850 environments. Use of this tool against production systems
-without explicit authorization is prohibited and may violate
-applicable laws and regulations.
-
-This research is conducted to improve the security posture of
-critical infrastructure by identifying and demonstrating
-vulnerabilities before malicious actors can exploit them.
+> [!WARNING]
+> **Strictly Authorized Research & Testing Only**
+> GridPulse is developed and distributed solely for academic research, defensive benchmarking, and authorized security evaluation in isolated laboratory environments.
+>
+> 1. **No Live OT Deployment:** Under no circumstances should GridPulse or its raw packet generation utilities (`goose_attacker`, `deploy_xdp.sh`) be executed against live, energized electrical substations, operational utility networks, or critical infrastructure systems.
+> 2. **Controlled Environments:** All experimental attack evaluations must be conducted within isolated software testbeds (e.g., Docker bridge networks with MTU 9,000) or physically air-gapped hardware-in-the-loop (HIL) testbenches.
+> 3. **Coordinated Vulnerability Disclosure:** This research adheres to responsible disclosure principles. The findings regarding IEC 62351-6 queue starvation and mitigation specifications have been shared with standard working groups (IEC TC 57 WG15) and national cybersecurity coordination agencies.
