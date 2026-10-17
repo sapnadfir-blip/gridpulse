@@ -1,7 +1,7 @@
 # GridPulse ⚡
 ### Breaking Smart Grid Protection via IEC 62351 Cryptographic Exhaustion (CIL-DoS)
 
-[![Status: Under Review](https://img.shields.io/badge/IEEE%20Transactions%20on%20Smart%20Grid-Under%20Review%20(Submitted%20Oct%207%2C%202026)-blueviolet.svg)](paper/main_tsg.pdf)
+[![Status: Under Review](https://img.shields.io/badge/IEEE%20Transactions%20on%20Smart%20Grid-Under%20Review%20(Submitted%20Oct%207%2C%202026)-blueviolet.svg)](#citation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](pyproject.toml)
 [![C Standard: C99](https://img.shields.io/badge/C-C99-orange.svg)](gridpulse/hardware/)
@@ -204,7 +204,6 @@ GridPulse/
 │   ├── THREAT_MODEL.md         # Process bus adversary capabilities & boundaries
 │   ├── LESSONS_FOR_DEFENDERS.md# Operational recommendations for substation engineers
 │   └── figures/                # Publication-quality architectural diagrams & plots
-├── paper/                      # IEEE Transactions on Smart Grid manuscript & figures
 ├── results/                    # CSV datasets from 49 controlled experiments & silicon tests
 ├── tests/                      # Pytest test suite (17 passed)
 ├── CITATION.cff                # Citation metadata

@@ -46,3 +46,8 @@ gridpulse/hardware/goose_attacker
 # Archive files
 *.zip
 *.tar.gz
+
+# Unpublished Academic Manuscripts & Proposals (Kept local, excluded from public repository)
+paper/
+Submission_ToSG_2026-10-07/
+research_proposal.*
