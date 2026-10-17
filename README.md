@@ -1,6 +1,7 @@
 # GridPulse ⚡
 ### Breaking Smart Grid Protection via IEC 62351 Cryptographic Exhaustion (CIL-DoS)
 
+[![Status: Under Review](https://img.shields.io/badge/IEEE%20Transactions%20on%20Smart%20Grid-Under%20Review%20(Submitted%20Oct%207%2C%202026)-blueviolet.svg)](paper/main_tsg.pdf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](pyproject.toml)
 [![C Standard: C99](https://img.shields.io/badge/C-C99-orange.svg)](gridpulse/hardware/)
@@ -8,6 +9,10 @@
 [![Hardware: ESP32 / Arduino](https://img.shields.io/badge/Hardware-ESP32%20%2F%20Arduino-red.svg)](gridpulse/hardware/esp32_crypto_bench/)
 
 > **GridPulse** is an open-source cybersecurity and power-system research toolkit demonstrating **Crypto-Induced Latency Denial of Service (CIL-DoS)** in IEC 61850 / IEC 62351 digital substations. It models the cyber-to-physical failure chain (generator rotor angle instability and transformer thermal stress), provides real embedded silicon benchmarks (Arduino / ESP32), benchmarks NIST Post-Quantum Cryptography (PQC), and deploys the **Priority Queue Admission Controller (PQAC)** defense.
+>
+> 📄 **Research Paper:** *Crypto-Induced Latency Denial of Service in IEC 61850 Substation Communications: Cyber-Physical Impact Analysis, Priority Admission Defense, and Post-Quantum Evaluation*  
+> 🏛️ **Affiliation:** Department of Computer Science and Engineering, PES University, Bengaluru, India  
+> 📬 **Status:** Submitted and **Under Review** in *IEEE Transactions on Smart Grid* (Submitted October 7, 2026).
 
 ⚠️ **Notice:** This repository is published strictly for authorized academic security research, defensive testing, and utility engineering validation.
 
@@ -39,6 +44,83 @@ To prevent packet spoofing and tampering, **IEC 62351-6** specifies cryptographi
 
 ---
 
+## 🏗️ System Architecture & Cyber-Physical Pipeline
+
+For in-depth mathematical formulations, state machine proofs, and hardware wiring diagrams, see our full technical document:  
+👉 **[Full Architecture Specification (`docs/ARCHITECTURE.md`)](docs/ARCHITECTURE.md)**
+
+### End-to-End Cyber-Physical Architecture
+
+```mermaid
+flowchart TD
+    subgraph Physical_Grid["Physical Power System (High-Voltage Bay)"]
+        GEN["Generator (SMIB System)"] --- TRANS["Power Transformer (Step-Up)"]
+        TRANS --- BUS["Substation 400kV Bus"]
+        BUS --- CB["Circuit Breaker (Trip Coil Actuator)"]
+        CB --- LINE["Transmission Line (Fault Location)"]
+    end
+
+    subgraph Process_Bus["Optical Ethernet Process Bus (IEC 61850-9-2 / GOOSE)"]
+        MU["Merging Unit (Current/Voltage CT/PT)"] -- "Sampled Values (SV)" --> FIBER["100/1000BASE-SX Ethernet Switch"]
+        PUB["Protection Relay A (Publisher)"] -- "Authenticated GOOSE (0x88B8)" --> FIBER
+        ATK["Adversary (Tapped Node / Compromised IED)"] -- "CIL-DoS Flood (100K pps)" --> FIBER
+    end
+
+    FIBER -- "Multicast Ethernet Frames" --> IED_RX["Protection Relay B (Subscriber / Breaker Controller)"]
+
+    subgraph IED_Architecture["Decoupled Subscriber Architecture (C / eBPF)"]
+        NIC["NIC Driver (Optional eBPF/XDP Line-Rate Pre-Filter)"] --> INGEST["Ingestion Thread (Zero-Copy Ring Buffer)"]
+        INGEST --> PQAC["PQAC Engine (3-Stage Admission Control)"]
+        PQAC -- "Class H (Trips)" --> QH["Queue HIGH (Strict Priority)"]
+        PQAC -- "Class N (Heartbeats)" --> QN["Queue NORMAL (Token Policed)"]
+        PQAC -- "Class L (Flood)" --> DROP["Drop / Quarantine (99.9% Filtered)"]
+        QH --> WORKERS["Verification Workers Pool (OpenSSL / liboqs)"]
+        QN --> WORKERS
+        WORKERS --> COMMIT["Verify-Before-Commit State Tracker"]
+        COMMIT --> LOGIC["Protection Tripping Logic (ANSI 50/51/50BF)"]
+    end
+
+    LOGIC -- "Trip Actuation (< 3.0 ms)" --> CB
+    LINE -.->|"Short-Circuit Fault (Pe = 0)"| MU
+```
+
+### Decoupled Two-Thread Pipeline & PQAC State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Ingest: Frame Arrives at Raw Socket
+    Ingest --> Stage1: Extract src_mac, stNum (< 0.2 µs)
+    
+    Stage1 --> KnownMAC: MAC in SCD Allowlist M
+    Stage1 --> UnknownMAC: MAC Unknown / Not in M
+    
+    KnownMAC --> Stage2: Compute Delta = (stNum - last_st)
+    Stage2 --> GatedTrip: Delta in (0, W] AND Token Available AND Rate < Lambda_H_max
+    Stage2 --> NormalHeartbeat: Delta == 0 AND Rate <= T_normal
+    Stage2 --> FloodDrop: Delta > W OR Rate > T_flood
+    
+    UnknownMAC --> NormalRate: Rate <= T_normal
+    UnknownMAC --> FloodDrop: Rate > T_normal
+    
+    GatedTrip --> QueueHIGH: Enqueue Class H (Strict Priority, Cap = 512)
+    NormalHeartbeat --> QueueNORMAL: Enqueue Class N (Cap = 2048)
+    NormalRate --> QueueNORMAL: Enqueue Class N
+    FloodDrop --> Dropped: Instant Drop (< 0.1 µs)
+    
+    QueueHIGH --> Worker: Dequeue (Class H First)
+    QueueNORMAL --> Worker: Dequeue (When QH == 0)
+    
+    Worker --> VerifyCrypto: Run RSA / ECDSA / ML-DSA Verification
+    VerifyCrypto --> ValidSig: Signature Valid
+    VerifyCrypto --> BadSig: Signature Invalid (Attack Frame)
+    
+    ValidSig --> CommitState: Update S_ver[mac] = stNum
+    CommitState --> ActuateTrip: Trigger Circuit Breaker (Trip < 3ms)
+    BadSig --> LogSecurityEvent: Discard Frame (Do NOT update S_ver)
+```
+
+---
+
 ## 🔬 Key Empirical Discoveries
 
 ### 1. Real Silicon Validation (Arduino / ESP32 Hardware)
@@ -58,18 +140,36 @@ To eliminate reliance on synthetic desktop simulations, cryptographic operations
 ```
 * **Discovery:** A single software ECDSA-P256 verification on embedded silicon takes **310.5 ms**, which inherently violates the 3.0 ms safety deadline by **over 100×** without any attack taking place!
 
-### 2. NIST Post-Quantum Cryptography (PQC) Evaluation
+### 2. Physical Grid Collapse Dynamics (SMIB Simulation)
+<p align="center">
+  <img src="docs/figures/fig9_transient_stability.png" width="85%" alt="Transient Stability under CIL-DoS"/>
+</p>
+
+* **Equal-Area Criterion Derivation:** For a 3-phase bolted fault ($P_e = 0$), Critical Clearing Time is $t_{\text{crit}} \approx 201.6$\,ms under base inertia ($H=5.0$\,s, $P_m=0.8$\,p.u.), dropping to $\approx 120$\,ms in low-inertia renewable grids ($H=2.5$\,s, $P_m=0.95$\,p.u.).
+* **Transformer Damage:** Under delayed backup clearing (350 ms), transformer through-fault thermal energy surges by **6.25× ($I^2 t$)** under IEEE Std C57.109-2018, causing severe 120 Hz Lorentz mechanical winding deformation.
+
+### 3. NIST Post-Quantum Cryptography (PQC) Evaluation
 We benchmarked official NIST quantum-resistant standards (**FIPS 204 ML-DSA** and **FIPS 205 SLH-DSA**, plus FALCON-512):
 * **The SLH-DSA Bottleneck:** Hash-based SLH-DSA-SHA2-128s takes **295.4–597.4 ms** to sign at the publisher (violating the 3 ms deadline at the source) and generates a **7,856-byte signature** that requires 9 kB jumbo frames which standard substation Ethernet switches discard.
 * **Lattice Signatures:** Lattice-based ML-DSA-44 and FALCON-512 achieve sub-millisecond execution and are effectively shielded by PQAC admission control.
 
-### 3. Failure of Naïve Countermeasures
+### 4. Failure of Naïve Countermeasures
+<p align="center">
+  <img src="docs/figures/fig5_queue_size.png" width="45%" alt="Queue Size Buffer Bloat"/>
+  <img src="docs/figures/fig6_workers.png" width="45%" alt="Parallel Workers Failure"/>
+</p>
+
 * **Buffer Bloat:** Expanding queue capacity from 4,096 to 16,384 frames inflates queueing latency from 2,388 ms to 8,898 ms ($4\times$ worse) while maintaining 100% deadline violations.
 * **Parallel Worker Threads:** Deploying 4 verification threads increases throughput, but an adversary flooding at 100K pps still maintains $\rho_4 = 14.3 \gg 1$, resulting in 100% deadline failure.
 
 ---
 
 ## 🛡️ The Defense: Priority Queue Admission Controller (PQAC)
+
+<p align="center">
+  <img src="docs/figures/fig1_latency_vs_attack_rate.png" width="48%" alt="Delivered Latency vs Attack Rate"/>
+  <img src="docs/figures/fig2_deadline_miss.png" width="48%" alt="Deadline Miss Ratio"/>
+</p>
 
 PQAC sits between the network interface and cryptographic verification workers, executing $O(1)$ triage in $<0.2\,\mu$s per frame:
 1. **Stage 1 (MAC Allowlist):** Cross-references source MAC against pre-provisioned Substation Configuration Description (SCD) allowlists.
@@ -99,6 +199,11 @@ GridPulse/
 │   │   ├── docker-compose.yml  # Multi-container process bus testbed (MTU 9000)
 │   │   └── esp32_crypto_bench/ # Arduino sketch for physical silicon benchmarking
 │   └── cli/                    # Click-based CLI with 12 subcommands
+├── docs/                       # Technical architecture & threat models
+│   ├── ARCHITECTURE.md         # Full mathematical formulations, proofs, and wiring
+│   ├── THREAT_MODEL.md         # Process bus adversary capabilities & boundaries
+│   ├── LESSONS_FOR_DEFENDERS.md# Operational recommendations for substation engineers
+│   └── figures/                # Publication-quality architectural diagrams & plots
 ├── paper/                      # IEEE Transactions on Smart Grid manuscript & figures
 ├── results/                    # CSV datasets from 49 controlled experiments & silicon tests
 ├── tests/                      # Pytest test suite (17 passed)
@@ -165,6 +270,7 @@ This work is detailed in our manuscript submitted to the **IEEE Transactions on 
 > **Authors:** Sapna Vikram Mewundi, Prajwal Chowdary M., Prasad B. Honnavalli  
 > **Affiliation:** Department of Computer Science and Engineering, PES University, Bengaluru, India  
 > **Correspondence:** sapnavm@pes.edu  
+> **Status:** **Under Review in IEEE Transactions on Smart Grid (Submitted October 7, 2026)**
 
 ### Citation (BibTeX)
 ```bibtex
@@ -173,7 +279,7 @@ This work is detailed in our manuscript submitted to the **IEEE Transactions on 
   journal={IEEE Transactions on Smart Grid},
   title={Crypto-Induced Latency Denial of Service in {IEC} 61850 Substation Communications: Cyber-Physical Impact Analysis, Priority Admission Defense, and Post-Quantum Evaluation},
   year={2026},
-  note={Under review}
+  note={Under review (Submitted October 7, 2026)}
 }
 ```
 
