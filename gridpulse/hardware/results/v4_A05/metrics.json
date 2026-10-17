@@ -1,0 +1,14 @@
+{
+  "id": "A05",
+  "label": "T=500",
+  "t_flood": 500,
+  "deadline_miss": 0,
+  "mean_us": 1081.77,
+  "p99_us": 1731.29,
+  "high": 0,
+  "normal": 0,
+  "low": 0,
+  "dropped": 0,
+  "valid": 20,
+  "invalid": 19978
+}

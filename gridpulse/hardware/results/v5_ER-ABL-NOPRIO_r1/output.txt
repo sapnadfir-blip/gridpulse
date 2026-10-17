@@ -1,0 +1,112 @@
+Attaching to attacker-node, ied-publisher, ied-subscriber
+ied-subscriber  | [CONFIG] Calibrated service-time emulation: 573.0 us/frame (mu = 1745 fps) — emulated embedded relay
+ied-subscriber  | [PQAC] Pre-registered publisher MAC from configuration: 72:f1:42:8b:01:f3
+ied-subscriber  | ╔══════════════════════════════════════════════════════════╗
+ied-subscriber  | ║  GridPulse GOOSE Subscriber                             ║
+ied-subscriber  | ║  Algorithm: RSA-2048    Mode: PRIORITY                 ║
+ied-subscriber  | ║  Workers: 1            Queue: 4096                      ║
+ied-subscriber  | ║  Thresholds: N=50 B=500 F=1000                       ║
+ied-subscriber  | ║  Ablation: no_mac=0 no_rate=0 no_priority=1          ║
+ied-subscriber  | ╚══════════════════════════════════════════════════════════╝
+ied-subscriber  | 
+ied-subscriber  | Listening on eth0 with 1 worker(s)...
+ied-subscriber  | 
+ied-subscriber  | [RECEIVER] Started — filling verification queue...
+ied-subscriber  | [WORKER-0] Started — verifying frames...
+ied-subscriber  | [Stats] Total: 5001, Valid: 28, Invalid: 4973
+ied-subscriber  |   Latency (us) -> Mean: 3239.92, p95: 21123.46, p99: 27082.58
+ied-subscriber  |   Deadline Miss: 3.30%, Q[H:0 N:1 L:0]
+ied-subscriber  | [Stats] Total: 10036, Valid: 58, Invalid: 9978
+ied-subscriber  |   Latency (us) -> Mean: 622.79, p95: 657.96, p99: 894.42
+ied-subscriber  |   Deadline Miss: 1.64%, Q[H:0 N:1 L:0]
+ied-subscriber  | [Stats] Total: 15072, Valid: 88, Invalid: 14984
+ied-subscriber  |   Latency (us) -> Mean: 610.18, p95: 645.96, p99: 831.33
+ied-subscriber  |   Deadline Miss: 1.09%, Q[H:0 N:1 L:0]
+ied-subscriber  | [RECEIVER] Done. Received 1997069 GOOSE frames
+ied-subscriber  |   HIGH=8, NORMAL=110, LOW=19989, DROPPED=1976962
+ied-subscriber  |   Scheduler overhead: 0.13 us/call (1997069 calls)
+ied-subscriber  | [Stats] Total: 20107, Valid: 118, Invalid: 19989
+ied-subscriber  |   Latency (us) -> Mean: 604.37, p95: 654.08, p99: 755.71
+ied-subscriber  |   Deadline Miss: 0.82%, Q[H:0 N:0 L:0]
+ied-subscriber  | [WORKER-0] Done. Processed 20107 frames.
+ied-subscriber  | 
+ied-subscriber  | ═══════════════════════════════════════════════════════════
+ied-subscriber  |   FINAL REPORT: PRIORITY mode, 1 worker(s), queue=4096
+ied-subscriber  | ═══════════════════════════════════════════════════════════
+ied-subscriber  |   Total: 20107, Valid: 118, Invalid: 19989
+ied-subscriber  |   Latency -> Mean: 805.90 us, p95: 1084.33 us, p99: 1153.37 us
+ied-subscriber  |   Deadline Miss: 0.85%
+ied-subscriber  |   Classification: H=8 N=110 L=19989 DROP=1976962
+ied-subscriber  |   Scheduler overhead: 0.13 us/call
+ied-subscriber  | ═══════════════════════════════════════════════════════════
+ied-subscriber  | Subscriber shutdown complete.
+attacker-node   | [ATTACKER] Pre-generated valid template signature (256 bytes) for RSA-2048
+attacker-node   | [ATTACKER] Initializing CIL-DoS research traffic generator...
+attacker-node   | [ATTACKER] Interface: eth0
+attacker-node   | [ATTACKER] Algorithm: RSA-2048
+attacker-node   | [ATTACKER] Target rate: 100000 pps
+attacker-node   | [ATTACKER] Duration: 20 seconds
+attacker-node   | [ATTACKER] Source MAC: 5a:59:83:da:45:df
+attacker-node   | 
+attacker-node   | ╔══════════════════════════════════════════════════════════╗
+attacker-node   | ║  GridPulse CIL-DoS Research Traffic Generator           ║
+attacker-node   | ║  Algorithm: RSA-2048      Target Rate: 100000 pps        ║
+attacker-node   | ║  Duration:  20 sec        Interface: eth0             ║
+attacker-node   | ╚══════════════════════════════════════════════════════════╝
+attacker-node   | 
+attacker-node   | [ATTACKER] 2.0s | sent: 200024 | rate: 100000 pps (target: 100000) | sqNum: 200024
+attacker-node   | [ATTACKER] 4.0s | sent: 400025 | rate: 100000 pps (target: 100000) | sqNum: 400025
+attacker-node   | [ATTACKER] 6.0s | sent: 600050 | rate: 100000 pps (target: 100000) | sqNum: 600050
+attacker-node   | [ATTACKER] 8.0s | sent: 800075 | rate: 100000 pps (target: 100000) | sqNum: 800075
+attacker-node   | [ATTACKER] 10.0s | sent: 1000077 | rate: 100000 pps (target: 100000) | sqNum: 1000077
+attacker-node   | [ATTACKER] 12.0s | sent: 1200098 | rate: 100000 pps (target: 100000) | sqNum: 1200098
+attacker-node   | [ATTACKER] 14.0s | sent: 1400099 | rate: 100000 pps (target: 100000) | sqNum: 1400099
+attacker-node   | [ATTACKER] 16.0s | sent: 1600123 | rate: 100000 pps (target: 100000) | sqNum: 1600123
+attacker-node   | [ATTACKER] 18.0s | sent: 1800124 | rate: 100000 pps (target: 100000) | sqNum: 1800124
+attacker-node   | 
+attacker-node   | ═══════════════════════════════════════════════════════════
+attacker-node   |   FINAL STATS
+attacker-node   |   Total frames sent:  1999992
+attacker-node   |   Total time:         20.00 seconds
+attacker-node   |   Average rate:       99999 pps
+attacker-node   | ═══════════════════════════════════════════════════════════
+attacker-node   | [ATTACKER] Shutdown complete.
+
+[Kied-subscriber exited with code 0
+ied-publisher   | Initializing publisher with RSA-2048...
+ied-publisher   | [Stats] Sent: 24, Trips: 0, stNum: 1, sqNum: 25
+ied-publisher   | [Stats] Sent: 54, Trips: 1, stNum: 3, sqNum: 26
+ied-publisher   | [Stats] Sent: 84, Trips: 2, stNum: 5, sqNum: 26
+ied-publisher   | [Stats] Sent: 114, Trips: 3, stNum: 7, sqNum: 26
+ied-publisher   | Publisher shutting down gracefully.
+
+[Kattacker-node exited with code 0
+
+[Kied-publisher exited with code 0
+ Network hardware_gridpulse-bus Creating 
+ Volume hardware_shared-keys Creating 
+ Volume hardware_shared-keys Creating 
+ Network hardware_gridpulse-bus Creating 
+ Volume hardware_shared-keys Created 
+ Volume hardware_shared-keys Created 
+ Network hardware_gridpulse-bus Created 
+ Network hardware_gridpulse-bus Created 
+ Container attacker-node Creating 
+ Container ied-publisher Creating 
+ Container attacker-node Created 
+ Container ied-publisher Created 
+ Container ied-subscriber Creating 
+ Container ied-subscriber Created 
+ Container attacker-node Starting 
+ Container ied-publisher Starting 
+ Container attacker-node Started 
+ Container ied-publisher Started 
+ Container ied-subscriber Starting 
+ Container ied-subscriber Started 
+ Compose Stopping Aborting on container exit...
+ Container attacker-node Stopping 
+ Container ied-subscriber Stopping 
+ Container ied-subscriber Stopped 
+ Container ied-publisher Stopping 
+ Container attacker-node Stopped 
+ Container ied-publisher Stopped 

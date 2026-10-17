@@ -1,0 +1,51 @@
+Attaching to ied-publisher, ied-subscriber
+ied-subscriber  | ╔══════════════════════════════════════════════════════════╗
+ied-subscriber  | ║  GridPulse GOOSE Subscriber                             ║
+ied-subscriber  | ║  Algorithm: RSA-2048    Mode: PRIORITY                 ║
+ied-subscriber  | ║  Workers: 1            Queue: 4096                      ║
+ied-subscriber  | ╚══════════════════════════════════════════════════════════╝
+ied-subscriber  | 
+ied-subscriber  | Listening on eth0 with 1 worker(s)...
+ied-subscriber  | 
+ied-subscriber  | [RECEIVER] Started — filling verification queue...
+ied-subscriber  | [WORKER-0] Started — verifying frames...
+ied-subscriber  | [Stats] Total: 6, Valid: 6, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 2970.06, p95: 3262.88, p99: 3262.88
+ied-subscriber  |   Deadline Miss: 33.33%, Q[H:0 N:0 L:0]
+ied-subscriber  | [Stats] Total: 11, Valid: 11, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 2935.30, p95: 3368.92, p99: 3368.92
+ied-subscriber  |   Deadline Miss: 27.27%, Q[H:0 N:0 L:0]
+ied-subscriber  | [Stats] Total: 16, Valid: 16, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 2819.52, p95: 3368.92, p99: 3368.92
+ied-subscriber  |   Deadline Miss: 18.75%, Q[H:0 N:0 L:0]
+ied-subscriber  | [Stats] Total: 21, Valid: 21, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 2782.99, p95: 3368.92, p99: 3368.92
+ied-subscriber  |   Deadline Miss: 19.05%, Q[H:0 N:0 L:0]
+ied-publisher   | Initializing publisher with RSA-2048...
+ied-publisher   | [Stats] Sent: 4, Trips: 0, stNum: 1, sqNum: 5
+ied-publisher   | [Stats] Sent: 9, Trips: 0, stNum: 1, sqNum: 10
+ied-publisher   | [Stats] Sent: 14, Trips: 0, stNum: 1, sqNum: 15
+ied-publisher   | [Stats] Sent: 19, Trips: 0, stNum: 1, sqNum: 20
+ied-publisher   | Publisher shutting down gracefully.
+
+[Kied-publisher exited with code 0
+ied-subscriber  | [WORKER-0] Done. Processed 24 frames.
+
+[Kied-subscriber exited with code 137
+ Network hardware_gridpulse-bus Creating 
+ Network hardware_gridpulse-bus Created 
+ Volume hardware_shared-keys Creating 
+ Volume hardware_shared-keys Created 
+ Container ied-publisher Creating 
+ Container ied-publisher Created 
+ Container ied-subscriber Creating 
+ Container ied-subscriber Created 
+ Container ied-publisher Starting 
+ Container ied-publisher Started 
+ Container ied-subscriber Starting 
+ Container ied-subscriber Started 
+ Compose Stopping Aborting on container exit...
+ Container ied-subscriber Stopping 
+ Container ied-subscriber Stopped 
+ Container ied-publisher Stopping 
+ Container ied-publisher Stopped 

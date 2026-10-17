@@ -1,0 +1,23 @@
+{
+  "id": "E06",
+  "label": "FIFO large-queue 100K",
+  "mode": "fifo",
+  "workers": 1,
+  "queue_size": 16384,
+  "attack_rate": 100000,
+  "algo": "RSA-2048",
+  "total_frames": 35316,
+  "valid_frames": 10,
+  "invalid_frames": 35306,
+  "mean_latency_us": 9263888.94,
+  "p95_latency_us": 9264346.38,
+  "p99_latency_us": 9264435.38,
+  "deadline_miss_pct": 100.0,
+  "queue_peak": 16384,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

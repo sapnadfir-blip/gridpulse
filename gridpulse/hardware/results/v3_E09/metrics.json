@@ -1,0 +1,23 @@
+{
+  "id": "E09",
+  "label": "PRIORITY baseline (no attack)",
+  "mode": "priority",
+  "workers": 1,
+  "queue_size": 4096,
+  "attack_rate": 0,
+  "algo": "RSA-2048",
+  "total_frames": 21,
+  "valid_frames": 21,
+  "invalid_frames": 0,
+  "mean_latency_us": 2782.99,
+  "p95_latency_us": 3368.92,
+  "p99_latency_us": 3368.92,
+  "deadline_miss_pct": 19.05,
+  "queue_peak": 0,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

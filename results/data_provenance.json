@@ -1,0 +1,81 @@
+{
+  "_description": "Data provenance labels for all experimental results",
+  "_generated": "2026-07-21T21:49:41+0530",
+  "crypto_benchmark.csv": {
+    "type": "MEASURED",
+    "method": "Direct measurement using time.perf_counter_ns()",
+    "hardware": "Apple M2 (see environment.json)",
+    "library": "cryptography 49.0.0 (OpenSSL 4.0.1)",
+    "notes": "Single-run benchmark, 10K iterations per algorithm"
+  },
+  "multi_trial_crypto.csv": {
+    "type": "MEASURED",
+    "method": "Multiple independent benchmark trials",
+    "trials": 5,
+    "iterations_per_trial": 5000,
+    "statistical_method": "95% CI via z=1.96, CV computed per trial",
+    "hardware": "Apple M2 (see environment.json)"
+  },
+  "multi_trial_summary.csv": {
+    "type": "DERIVED (from measurements)",
+    "method": "Aggregated statistics across trials",
+    "source": "multi_trial_crypto.csv"
+  },
+  "queue_validation.csv": {
+    "type": "ANALYTICAL + SIMULATED",
+    "analytical_model": "M/M/1 (Markov arrival, Markov service)",
+    "simulation_type": "Discrete-event Monte Carlo simulation",
+    "simulation_seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ],
+    "simulation_duration_sec": 5.0,
+    "service_rate_source": "MEASURED (from multi_trial_crypto.csv)",
+    "notes": "Service rate \u00b5 derived from measured verification latency"
+  },
+  "model_comparison.csv": {
+    "type": "ANALYTICAL",
+    "models": [
+      "M/M/1 (exponential service)",
+      "M/D/1 (deterministic service)"
+    ],
+    "justification": "M/M/1 provides upper bound on wait times (conservative). M/D/1 provides lower bound. True system lies between these bounds. M/M/1 selected as primary model for worst-case analysis.",
+    "service_rate_source": "MEASURED"
+  },
+  "constrained_hardware.csv": {
+    "type": "ESTIMATED (scaled from measurements)",
+    "method": "M2 measurements \u00d7 hardware-specific scaling factors",
+    "scaling_source": "Published benchmarks (mbed TLS, TI SDK, OpenSSL speed)",
+    "hardware_profiles": {
+      "ARM_Cortex-M4": "168 MHz, no crypto accel, mbed TLS benchmarks",
+      "ARM_Cortex-R5": "600 MHz, no crypto accel, TI AM65x SDK benchmarks",
+      "ARM_Cortex-A9": "800 MHz, NEON, Zynq-7020 OpenSSL benchmarks",
+      "Intel_Atom_E3800": "1.91 GHz, AES-NI, OpenSSL speed benchmarks"
+    },
+    "limitation": "Scaling factors are estimates based on published benchmarks. Actual IED performance should be measured on target hardware for publication-grade results."
+  },
+  "ablation_study.csv": {
+    "type": "ANALYTICAL (modeled from measurements)",
+    "method": "M/M/1 queueing model with measured service rates",
+    "defense_modes": {
+      "none": "No defense \u2014 all attack traffic reaches verifier",
+      "rate_limit_1k": "Per-source rate limiter at 1,000 pps",
+      "rate_limit_5k": "Per-source rate limiter at 5,000 pps",
+      "mac_filter": "MAC allowlist \u2014 drops 100% of unknown sources",
+      "full_xdp": "Combined XDP defense (MAC + rate limit + sequence validation)"
+    },
+    "xdp_note": "XDP defense effectiveness values are MODELED (not measured on live XDP). The model assumes XDP drops packets before they reach the verification queue. This assumption is valid because XDP operates at NIC driver level, before any application processing."
+  },
+  "attacker_capability.csv": {
+    "type": "ESTIMATED (literature-based)",
+    "method": "Attacker capability tiers based on published packet generation benchmarks",
+    "assumptions": [
+      "Attacker has physical or logical access to substation LAN",
+      "GOOSE is multicast over Ethernet (no routing/firewall between attacker and IED)",
+      "Packet rates based on AF_PACKET (Python), DPDK (C), and hardware generators"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+Attacker_Tier,Max_PPS,Bandwidth_Mbps,Feasibility,Saturates_HMAC-SHA256,Saturates_RSA-2048,Saturates_ECDSA-P256
+Single laptop (Python),10000,16.0,trivial,NO,NO,NO
+Single laptop (C/DPDK),100000,160.0,moderate,NO,YES ⚠️,YES ⚠️
+Dedicated attack box,1000000,1600.0,difficult,YES ⚠️,YES ⚠️,YES ⚠️
+Compromised IED,50000,80.0,trivial,NO,YES ⚠️,YES ⚠️

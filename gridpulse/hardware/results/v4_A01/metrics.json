@@ -1,0 +1,14 @@
+{
+  "id": "A01",
+  "label": "T=20 aggressive",
+  "t_flood": 20,
+  "deadline_miss": 0,
+  "mean_us": 1105.0,
+  "p99_us": 1739.58,
+  "high": 0,
+  "normal": 0,
+  "low": 0,
+  "dropped": 0,
+  "valid": 19,
+  "invalid": 20015
+}

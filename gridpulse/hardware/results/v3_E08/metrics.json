@@ -1,0 +1,23 @@
+{
+  "id": "E08",
+  "label": "FIFO 4-workers 100K",
+  "mode": "fifo",
+  "workers": 4,
+  "queue_size": 4096,
+  "attack_rate": 100000,
+  "algo": "RSA-2048",
+  "total_frames": 127042,
+  "valid_frames": 11,
+  "invalid_frames": 127031,
+  "mean_latency_us": 629450.0,
+  "p95_latency_us": 630873.38,
+  "p99_latency_us": 631127.29,
+  "deadline_miss_pct": 100.0,
+  "queue_peak": 4096,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

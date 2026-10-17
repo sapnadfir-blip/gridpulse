@@ -1,0 +1,23 @@
+{
+  "id": "E03",
+  "label": "FIFO 50K pps attack",
+  "mode": "fifo",
+  "workers": 1,
+  "queue_size": 4096,
+  "attack_rate": 50000,
+  "algo": "RSA-2048",
+  "total_frames": 44275,
+  "valid_frames": 20,
+  "invalid_frames": 44255,
+  "mean_latency_us": 2301933.75,
+  "p95_latency_us": 2303168.79,
+  "p99_latency_us": 2303920.13,
+  "deadline_miss_pct": 100.0,
+  "queue_peak": 4096,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

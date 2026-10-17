@@ -1,0 +1,44 @@
+# Dockerfile.attacker - CIL-DoS Attack Traffic Generator
+# Generates high-rate GOOSE frames with structurally valid signatures to overwhelm
+# the subscriber's cryptographic verification pipeline
+# Supports classical (RSA, ECDSA, HMAC) and post-quantum (Dilithium, SPHINCS+, FALCON) algorithms
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    libssl-dev \
+    iproute2 \
+    tcpdump \
+    net-tools \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build liboqs (Open Quantum Safe) from source
+RUN git clone --depth 1 --branch 0.11.0 https://github.com/open-quantum-safe/liboqs.git /tmp/liboqs && \
+    cd /tmp/liboqs && \
+    mkdir build && cd build && \
+    cmake -GNinja \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DBUILD_SHARED_LIBS=ON \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      .. && \
+    ninja && ninja install && \
+    ldconfig && \
+    rm -rf /tmp/liboqs
+
+WORKDIR /app
+
+COPY goose_common.h .
+COPY goose_attacker.c .
+
+# Compile the attacker/traffic generator with PQC support
+RUN gcc -O2 -DOQS_ENABLED -o goose_attacker goose_attacker.c \
+    -lssl -lcrypto -loqs -lpthread -lm
+
+ENTRYPOINT ["./goose_attacker"]
+CMD ["--interface", "eth0", "--rate", "25000", "--duration", "60"]

@@ -1,0 +1,117 @@
+GRIDPULSE SUPPLEMENTAL MATERIALS
+=================================
+GridPulse: When IEC 62351 Cryptography Becomes a Denial-of-Service
+Weapon Against Power Grid Protection
+
+PROJECT STATUS: Complete working implementation
+TOOL RELEASE: Open-source release planned at talk time
+REPOSITORY: Will be made public on GitHub before the conference
+
+
+1. IMPLEMENTATION SUMMARY
+-------------------------
+- 34 Python source files, 8,642 lines of code
+- 17 unit tests, all passing
+- 12 CLI commands
+- Complete documentation (threat model, defender lessons)
+- Software-emulated IEC 61850 testbed (runs on macOS/Linux)
+- Scripted 7-phase live demonstration with Rich terminal dashboard
+
+
+2. EXPERIMENTAL RESULTS (MEASURED ON APPLE M2)
+------------------------------------------------
+Algorithm         Mean Verify   95% CI            Service Rate
+HMAC-SHA256       1.4 us        [1.4, 1.4]        714,286 ops/s
+RSA-2048          33.6 us       [33.4, 33.7]      29,762 ops/s
+ECDSA-P256        58.9 us       [58.2, 59.6]      16,978 ops/s
+
+Methodology: 5 trials x 5,000 iterations per algorithm
+Statistical rigor: mean, std, 95% CI, CV, min, max, p50/p95/p99
+All raw CSV data included in repository under results/
+
+
+3. CONSTRAINED HARDWARE ANALYSIS (ESTIMATED FROM PUBLISHED SPECS)
+-------------------------------------------------------------------
+Platform          RSA Verify    Saturation Rate   Notes
+Apple M2          33.6 us       29,762 pps        Baseline (measured)
+Intel Atom        271 us        3,690 pps         Substation gateway class
+ARM Cortex-A9     845 us        1,183 pps         High-performance relay
+ARM Cortex-R5     2,704 us      370 pps           Mid-range relay
+ARM Cortex-M4     10,142 us     99 pps            Resource-constrained relay
+
+Key finding: On a Cortex-M4 relay, just 99 packets per second of attack
+traffic saturates the verification queue and causes 100% deadline violations.
+This rate is trivially achievable from any device on the substation LAN.
+
+
+4. QUEUEING MODEL VALIDATION
+-------------------------------
+- M/M/1 analytical model validated against discrete-event simulation
+- Utilization range tested: rho = 0.1 to 0.99
+- Error at high utilization (rho > 0.9): 9-12% (conservative upper bound)
+- M/M/1 vs M/D/1 comparison confirms Pollaczek-Khinchine bound:
+  M/M/1 mean wait = 2x M/D/1 mean wait at same utilization
+- The M/M/1 model is deliberately conservative (overestimates latency)
+  to provide a worst-case bound suitable for security analysis
+
+
+5. DEFENSE COMPARISON (8 APPROACHES)
+---------------------------------------
+Defense           Layer  GOOSE?  Latency     Max Rate    Effectiveness
+No Defense        -      -       -           -           0%
+Switch MAC ACL    L2     No      ~0 us       Wire speed  High (but MAC spoofable)
+VLAN Isolation    L2     No      ~0 us       Wire speed  Partial (same-VLAN bypass)
+Firewall (L3-4)   L3     No      50-200 us   N/A         0% (GOOSE is L2, not IP)
+IDS/IPS           L7     Yes     100-500 us  100K-500K   Partial (adds latency)
+GOOSE IDS         L7     Yes     ~10 us      ~50K        Detection only (no block)
+Rate Limiter      L4     No      ~5 us       ~200K       Partial (userspace)
+eBPF/XDP          NIC    Yes     0.1-0.5 us  5M-20M+     Full (pre-verification)
+
+Key insight: Only eBPF/XDP operates before the verification queue,
+which is the only point where CIL-DoS can be fully neutralized.
+
+
+6. DEMO CAPABILITIES
+-----------------------
+The live demonstration runs a 7-phase scripted narrative:
+
+Phase 0: SYSTEM OVERVIEW          (15s)  Introduction to testbed
+Phase 1: BASELINE OPERATION       (30s)  Normal: latency ~2.7ms, all OK
+Phase 2: RECONNAISSANCE           (15s)  Attacker probes at 10 pps
+Phase 3: CIL-DoS RAMP-UP          (30s)  Ramp 500-15K pps, latency climbs
+Phase 4: FULL ATTACK               (30s)  25K pps: latency 52ms (17x deadline)
+Phase 5: XDP DEFENSE ACTIVATED     (30s)  Defense on: instant recovery
+Phase 6: ATTACKER ESCALATION       (30s)  100K pps: XDP holds, 100% drop
+
+The demo uses a software-emulated testbed with:
+- Thread-safe message bus emulating substation Ethernet
+- Generic relay profiles (not vendor-specific)
+- M/M/1 queueing model driving realistic latency calculations
+- Rich terminal dashboard with live metrics
+
+Can be run on any macOS or Linux machine with Python 3.10+.
+No special hardware, root access, or network configuration required.
+
+
+7. RESPONSIBLE DISCLOSURE
+---------------------------
+- No specific vendor hardware was tested or named
+- Generic relay profiles used (High-Performance, Mid-Range,
+  Resource-Constrained, Gateway)
+- All timing data clearly labeled as MEASURED, DERIVED, or ESTIMATED
+  with full provenance tracking
+- Tool designed for authorized security testing only
+- Coordinated disclosure will be initiated before public tool release
+
+
+8. WHY THIS MATTERS NOW
+--------------------------
+IEC 62351 adoption is accelerating worldwide:
+- NERC CIP standards increasingly reference IEC 62351
+- European TSOs mandating encrypted substation communications
+- IEC 62351-6 specifically targets GOOSE message authentication
+
+Every utility deploying IEC 62351-6 introduces this attack surface.
+The defense (eBPF/XDP pre-filtering) is deployable today on any
+Linux-based relay or gateway. This talk provides both the threat
+awareness and the practical defense toolkit.

@@ -1,0 +1,14 @@
+{
+  "id": "A06",
+  "label": "T=1000 default",
+  "t_flood": 1000,
+  "deadline_miss": 0,
+  "mean_us": 1087.63,
+  "p99_us": 1548.5,
+  "high": 0,
+  "normal": 0,
+  "low": 0,
+  "dropped": 0,
+  "valid": 20,
+  "invalid": 20024
+}

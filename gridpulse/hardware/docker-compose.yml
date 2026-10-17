@@ -1,0 +1,148 @@
+# GridPulse Hardware Validation Testbed
+# Docker Compose - Virtual Substation on Mac (Apple M2)
+#
+# Architecture:
+#   Publisher (IED #1) ──┬── gridpulse-bus (Layer 2 bridge) ──── Subscriber (IED #2)
+#                        │                                        + XDP filter
+#   Attacker ────────────┘
+#
+# Authors: Dr. Sapna V. M., Prasad B. H., Prajwal Chowdary M.
+# PES University, Bengaluru, India
+
+
+networks:
+  gridpulse-bus:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+      com.docker.network.driver.mtu: "9000"
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+volumes:
+  shared-keys:
+  experiment-results:
+
+services:
+  # ── IED Publisher (Protective Relay) ──────────────────────────
+  publisher:
+    build:
+      context: .
+      dockerfile: Dockerfile.publisher
+    container_name: ied-publisher
+    hostname: ied-publisher
+    networks:
+      gridpulse-bus:
+        ipv4_address: 172.20.0.10
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - shared-keys:/shared
+    environment:
+      - GOOSE_ALGORITHM=${GOOSE_ALGORITHM:-RSA-2048}
+      - HEARTBEAT_MS=${HEARTBEAT_MS:-1000}
+      - DURATION=${DURATION:-60}
+      - PUB_DURATION=${PUB_DURATION:-120}
+      - TRIP_INTERVAL=${TRIP_INTERVAL:-5}
+    command: >
+      --interface eth0
+      --algorithm ${GOOSE_ALGORITHM:-RSA-2048}
+      --duration ${PUB_DURATION:-120}
+      --heartbeat-ms ${HEARTBEAT_MS:-200}
+      --trip-interval ${TRIP_INTERVAL:-5}
+    restart: "no"
+
+  # ── IED Subscriber (Merging Unit / Bay Controller) ───────────
+  subscriber:
+    build:
+      context: .
+      dockerfile: Dockerfile.subscriber
+    container_name: ied-subscriber
+    hostname: ied-subscriber
+    networks:
+      gridpulse-bus:
+        ipv4_address: 172.20.0.20
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN      # Required for XDP/BPF loading
+    volumes:
+      - shared-keys:/shared
+      - ./results:/results
+    environment:
+      - GOOSE_ALGORITHM=${GOOSE_ALGORITHM:-RSA-2048}
+      - VERIFY_ENABLED=${VERIFY_ENABLED:-true}
+      - XDP_ENABLED=${XDP_ENABLED:-false}
+      - DURATION=${DURATION:-60}
+      - QUEUE_MODE=${QUEUE_MODE:-fifo}
+      - WORKERS=${WORKERS:-1}
+      - QUEUE_SIZE=${QUEUE_SIZE:-4096}
+      - SERVICE_TIME_US=${SERVICE_TIME_US:-0}
+      - ABLATION_NO_MAC=${ABLATION_NO_MAC:-}
+      - ABLATION_NO_RATE=${ABLATION_NO_RATE:-}
+      - ABLATION_NO_PRIORITY=${ABLATION_NO_PRIORITY:-}
+    command: >
+      --interface eth0
+      --algorithm ${GOOSE_ALGORITHM:-RSA-2048}
+      --duration ${DURATION:-60}
+      --output /results/subscriber_timing.csv
+      --mode ${QUEUE_MODE:-fifo}
+      --workers ${WORKERS:-1}
+      --queue-size ${QUEUE_SIZE:-4096}
+      --t-normal ${T_NORMAL:-50}
+      --t-burst ${T_BURST:-500}
+      --t-flood ${T_FLOOD:-1000}
+    depends_on:
+      - publisher
+    restart: "no"
+
+  # ── Attacker Node (CIL-DoS Traffic Generator) ───────────────
+  attacker:
+    build:
+      context: .
+      dockerfile: Dockerfile.attacker
+    container_name: attacker-node
+    hostname: attacker-node
+    networks:
+      gridpulse-bus:
+        ipv4_address: 172.20.0.99
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - ATTACK_RATE=${ATTACK_RATE:-25000}
+      - ATTACK_DURATION=${DURATION:-60}
+    command: >
+      --interface eth0
+      --rate ${ATTACK_RATE:-25000}
+      --duration ${DURATION:-60}
+      ${SPOOF_MAC:+--spoof-mac $SPOOF_MAC}
+      ${RANDOM_MAC:+--random-mac}
+    profiles:
+      - attack    # Only starts when explicitly enabled: docker compose --profile attack up
+    restart: "no"
+
+  # ── Packet Capture (tcpdump sidecar) ─────────────────────────
+  pcap-capture:
+    image: ubuntu:22.04
+    container_name: pcap-capture
+    hostname: pcap-capture
+    networks:
+      gridpulse-bus:
+        ipv4_address: 172.20.0.200
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./results:/results
+    entrypoint: /bin/bash
+    command: >
+      -c "apt-get update -qq && apt-get install -y -qq tcpdump > /dev/null 2>&1 &&
+          echo '[pcap] Capturing all traffic on eth0...' &&
+          timeout ${DURATION:-60} tcpdump -i eth0 -w /results/capture.pcap -s 0 2>/dev/null;
+          echo '[pcap] Capture complete'"
+    profiles:
+      - capture   # Only starts when explicitly enabled
+    restart: "no"

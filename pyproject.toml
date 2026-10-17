@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gridpulse"
+version = "0.1.0"
+description = "Smart Grid Security Research Toolkit — CIL-DoS Attack & eBPF/XDP Defense"
+readme = "README.md"
+requires-python = ">= 3.10"
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "cryptography>=41.0"
+]
+license = {text = "MIT"}
+authors = [
+    {name = "GridPulse Research Team"}
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0"
+]
+
+[project.scripts]
+gridpulse = "gridpulse.cli.main:cli"

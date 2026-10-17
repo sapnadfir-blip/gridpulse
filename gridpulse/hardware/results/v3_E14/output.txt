@@ -1,0 +1,92 @@
+Attaching to attacker-node, ied-publisher, ied-subscriber
+ied-subscriber  | ╔══════════════════════════════════════════════════════════╗
+ied-subscriber  | ║  GridPulse GOOSE Subscriber                             ║
+ied-subscriber  | ║  Algorithm: HMAC-SHA256  Mode: FIFO                     ║
+ied-subscriber  | ║  Workers: 1            Queue: 4096                      ║
+ied-subscriber  | ╚══════════════════════════════════════════════════════════╝
+ied-subscriber  | 
+ied-subscriber  | Listening on eth0 with 1 worker(s)...
+ied-subscriber  | 
+ied-subscriber  | [WORKER-0] Started — verifying frames...
+ied-subscriber  | [RECEIVER] Started — filling verification queue...
+ied-subscriber  | [Stats] Total: 495898, Valid: 495898, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 700.46, p95: 1149.04, p99: 1186.63
+ied-subscriber  |   Deadline Miss: 1.70%, Queue: 106, Peak: 4096, Dropped: 3265
+ied-subscriber  | [Stats] Total: 995357, Valid: 995357, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 640.32, p95: 1137.04, p99: 1178.00
+ied-subscriber  |   Deadline Miss: 1.09%, Queue: 124, Peak: 4096, Dropped: 3265
+ied-subscriber  | [Stats] Total: 1494564, Valid: 1494564, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 626.24, p95: 1195.04, p99: 1232.88
+ied-subscriber  |   Deadline Miss: 1.07%, Queue: 151, Peak: 4096, Dropped: 3265
+ied-subscriber  | [Stats] Total: 1994275, Valid: 1994275, Invalid: 0
+ied-subscriber  |   Latency (us) -> Mean: 725.46, p95: 1203.58, p99: 1250.04
+ied-subscriber  |   Deadline Miss: 1.01%, Queue: 144, Peak: 4096, Dropped: 3265
+attacker-node   | [ATTACKER] Initializing CIL-DoS research traffic generator...
+attacker-node   | [ATTACKER] Interface: eth0
+attacker-node   | [ATTACKER] Algorithm: RSA-2048
+attacker-node   | [ATTACKER] Target rate: 100000 pps
+attacker-node   | [ATTACKER] Duration: 25 seconds
+attacker-node   | [ATTACKER] Source MAC: fe:5f:75:29:d0:44
+attacker-node   | 
+attacker-node   | ╔══════════════════════════════════════════════════════════╗
+attacker-node   | ║  GridPulse CIL-DoS Research Traffic Generator           ║
+attacker-node   | ║  Algorithm: RSA-2048      Target Rate: 100000 pps        ║
+attacker-node   | ║  Duration:  25 sec        Interface: eth0             ║
+attacker-node   | ╚══════════════════════════════════════════════════════════╝
+attacker-node   | 
+attacker-node   | [ATTACKER] 2.0s | sent: 200009 | rate: 100000 pps (target: 100000) | sqNum: 200009
+attacker-node   | [ATTACKER] 4.0s | sent: 400009 | rate: 100000 pps (target: 100000) | sqNum: 400009
+attacker-node   | [ATTACKER] 6.0s | sent: 600109 | rate: 100000 pps (target: 100000) | sqNum: 600109
+attacker-node   | [ATTACKER] 8.0s | sent: 800110 | rate: 100000 pps (target: 100000) | sqNum: 800110
+attacker-node   | [ATTACKER] 10.0s | sent: 1000110 | rate: 100000 pps (target: 100000) | sqNum: 1000110
+attacker-node   | [ATTACKER] 12.0s | sent: 1200210 | rate: 100000 pps (target: 100000) | sqNum: 1200210
+attacker-node   | [ATTACKER] 14.0s | sent: 1400211 | rate: 100000 pps (target: 100000) | sqNum: 1400211
+attacker-node   | [ATTACKER] 16.0s | sent: 1600213 | rate: 100000 pps (target: 100000) | sqNum: 1600213
+attacker-node   | [ATTACKER] 18.0s | sent: 1800308 | rate: 100000 pps (target: 100000) | sqNum: 1800308
+attacker-node   | [ATTACKER] 20.0s | sent: 2000408 | rate: 100000 pps (target: 100000) | sqNum: 2000408
+attacker-node   | [ATTACKER] 22.0s | sent: 2200410 | rate: 100000 pps (target: 100000) | sqNum: 2200410
+attacker-node   | [ATTACKER] 24.0s | sent: 2400506 | rate: 100000 pps (target: 100000) | sqNum: 2400506
+attacker-node   | 
+attacker-node   | ═══════════════════════════════════════════════════════════
+attacker-node   |   FINAL STATS
+attacker-node   |   Total frames sent:  2499907
+attacker-node   |   Total time:         25.00 seconds
+attacker-node   |   Average rate:       99996 pps
+attacker-node   | ═══════════════════════════════════════════════════════════
+attacker-node   | [ATTACKER] Shutdown complete.
+ied-publisher   | Initializing publisher with HMAC-SHA256...
+ied-publisher   | [Stats] Sent: 4, Trips: 0, stNum: 1, sqNum: 5
+ied-publisher   | [Stats] Sent: 9, Trips: 0, stNum: 1, sqNum: 10
+ied-publisher   | [Stats] Sent: 14, Trips: 0, stNum: 1, sqNum: 15
+ied-publisher   | [Stats] Sent: 19, Trips: 0, stNum: 1, sqNum: 20
+ied-publisher   | Publisher shutting down gracefully.
+ied-subscriber  | [WORKER-0] Done. Processed 2483713 frames.
+
+[Kattacker-node exited with code 0
+
+[Kied-publisher exited with code 0
+
+[Kied-subscriber exited with code 137
+ Network hardware_gridpulse-bus Creating 
+ Network hardware_gridpulse-bus Created 
+ Volume hardware_shared-keys Creating 
+ Volume hardware_shared-keys Created 
+ Container attacker-node Creating 
+ Container ied-publisher Creating 
+ Container ied-publisher Created 
+ Container ied-subscriber Creating 
+ Container attacker-node Created 
+ Container ied-subscriber Created 
+ Container ied-publisher Starting 
+ Container attacker-node Starting 
+ Container attacker-node Started 
+ Container ied-publisher Started 
+ Container ied-subscriber Starting 
+ Container ied-subscriber Started 
+ Compose Stopping Aborting on container exit...
+ Container ied-subscriber Stopping 
+ Container attacker-node Stopping 
+ Container attacker-node Stopped 
+ Container ied-subscriber Stopped 
+ Container ied-publisher Stopping 
+ Container ied-publisher Stopped 

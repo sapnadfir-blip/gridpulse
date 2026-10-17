@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-07-28T10:36:56.374586",
+  "platform": "Docker on macOS (Apple M2)",
+  "experiments": {
+    "E1": {
+      "name": "Baseline (No Attack)",
+      "frames": 29,
+      "mean_us": 2622.86,
+      "p50_us": 2204.33,
+      "p95_us": 4863.88,
+      "p99_us": 7821.67,
+      "min_us": 1913.5,
+      "max_us": 7821.67,
+      "deadline_met_pct": 79.31
+    },
+    "E2": {
+      "name": "Low Attack (500 pps)",
+      "frames": 14490,
+      "mean_us": 1041.69,
+      "p50_us": 1076.5,
+      "p95_us": 1318.04,
+      "p99_us": 1674.75,
+      "min_us": 519.88,
+      "max_us": 24300.08,
+      "deadline_met_pct": 99.83
+    },
+    "E3": {
+      "name": "Medium Attack (5,000 pps)",
+      "frames": 53363,
+      "mean_us": 559.73,
+      "p50_us": 551.92,
+      "p95_us": 598.29,
+      "p99_us": 776.38,
+      "min_us": 520.21,
+      "max_us": 3915.25,
+      "deadline_met_pct": 100.0
+    },
+    "E4": {
+      "name": "High Attack (25,000 pps)",
+      "frames": 49219,
+      "mean_us": 585.27,
+      "p50_us": 557.54,
+      "p95_us": 725.5,
+      "p99_us": 905.67,
+      "min_us": 518.83,
+      "max_us": 47977.58,
+      "deadline_met_pct": 99.93
+    },
+    "E5": {
+      "name": "XDP Defense Active (25,000 pps + XDP)",
+      "frames": 53203,
+      "mean_us": 560.62,
+      "p50_us": 551.0,
+      "p95_us": 616.54,
+      "p99_us": 778.87,
+      "min_us": 532.38,
+      "max_us": 5247.38,
+      "deadline_met_pct": 99.99
+    },
+    "E6": {
+      "name": "Escalation (100,000 pps + XDP)",
+      "frames": 50800,
+      "mean_us": 567.01,
+      "p50_us": 555.54,
+      "p95_us": 640.46,
+      "p99_us": 792.58,
+      "min_us": 532.5,
+      "max_us": 3969.58,
+      "deadline_met_pct": 100.0
+    },
+    "E7_hmac": {
+      "name": "Algorithm Comparison: HMAC-SHA256",
+      "frames": 746083,
+      "mean_us": 0.81,
+      "p50_us": 0.63,
+      "p95_us": 1.0,
+      "p99_us": 4.5,
+      "min_us": 0.08,
+      "max_us": 2321.63,
+      "deadline_met_pct": 100.0
+    },
+    "E7_rsa": {
+      "name": "Algorithm Comparison: RSA-2048",
+      "frames": 50300,
+      "mean_us": 573.44,
+      "p50_us": 553.38,
+      "p95_us": 676.92,
+      "p99_us": 833.58,
+      "min_us": 518.33,
+      "max_us": 16938.96,
+      "deadline_met_pct": 99.95
+    },
+    "E7_ecdsa": {
+      "name": "Algorithm Comparison: ECDSA-P256",
+      "frames": 404253,
+      "mean_us": 71.85,
+      "p50_us": 69.29,
+      "p95_us": 82.17,
+      "p99_us": 91.79,
+      "min_us": 67.04,
+      "max_us": 13769.12,
+      "deadline_met_pct": 100.0
+    }
+  }
+}

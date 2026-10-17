@@ -1,0 +1,23 @@
+{
+  "id": "E13",
+  "label": "PRIORITY 500K pps defense",
+  "mode": "priority",
+  "workers": 1,
+  "queue_size": 4096,
+  "attack_rate": 500000,
+  "algo": "RSA-2048",
+  "total_frames": 33701,
+  "valid_frames": 20,
+  "invalid_frames": 33681,
+  "mean_latency_us": 2505308.19,
+  "p95_latency_us": 2512471.13,
+  "p99_latency_us": 2513365.21,
+  "deadline_miss_pct": 99.87,
+  "queue_peak": 0,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

@@ -1,0 +1,14 @@
+{
+  "id": "A02",
+  "label": "T=50",
+  "t_flood": 50,
+  "deadline_miss": 0,
+  "mean_us": 1222.28,
+  "p99_us": 1859.58,
+  "high": 0,
+  "normal": 0,
+  "low": 0,
+  "dropped": 0,
+  "valid": 20,
+  "invalid": 20013
+}

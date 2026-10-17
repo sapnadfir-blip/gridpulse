@@ -1,0 +1,14 @@
+{
+  "id": "A07",
+  "label": "T=2000 permissive",
+  "t_flood": 2000,
+  "deadline_miss": 0,
+  "mean_us": 1159.79,
+  "p99_us": 1772.75,
+  "high": 0,
+  "normal": 0,
+  "low": 0,
+  "dropped": 0,
+  "valid": 20,
+  "invalid": 20023
+}

@@ -1,0 +1,7 @@
+chip,algorithm,operation,payload_bytes,iterations,mean_us,min_us,max_us
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),HMAC-SHA256,verify,350,2000,167.3,166,188
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),AES-128-GCM,verify,350,2000,228.7,227,331
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),RSA-2048,verify,32,100,980.1,976,992
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),RSA-2048,sign,32,20,181518.1,179387,183626
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),ECDSA-P256,verify,32,10,310475.9,310432,310494
+ESP32-D0WDQ6 (Xtensa LX6 @ 240MHz, dual-core),ECDSA-P256,sign,32,10,156932.9,156619,157399

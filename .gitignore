@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Pytest / Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# macOS / OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+
+# C / Object / Executables
+*.o
+*.so
+*.dylib
+gridpulse/hardware/crypto_bench
+gridpulse/hardware/test_crypto_behavior
+gridpulse/hardware/goose_subscriber
+gridpulse/hardware/goose_attacker
+
+# LaTeX Auxiliaries (keep .tex and .pdf)
+*.aux
+*.log
+*.out
+*.toc
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Archive files
+*.zip
+*.tar.gz

@@ -1,0 +1,23 @@
+{
+  "id": "E10",
+  "label": "PRIORITY 10K pps defense",
+  "mode": "priority",
+  "workers": 1,
+  "queue_size": 4096,
+  "attack_rate": 10000,
+  "algo": "RSA-2048",
+  "total_frames": 2042,
+  "valid_frames": 20,
+  "invalid_frames": 2022,
+  "mean_latency_us": 3578.58,
+  "p95_latency_us": 4718.38,
+  "p99_latency_us": 5149.79,
+  "deadline_miss_pct": 85.21,
+  "queue_peak": 0,
+  "queue_drops": 0,
+  "scheduler_overhead_us": 0,
+  "classified_high": 0,
+  "classified_normal": 0,
+  "classified_low": 0,
+  "classified_dropped": 0
+}

@@ -1,0 +1,45 @@
+# Dockerfile.publisher - IEC 61850 GOOSE Publisher IED
+# Compiles and runs the GOOSE publisher with real cryptographic signing
+# Supports classical (RSA, ECDSA, HMAC) and post-quantum (Dilithium, SPHINCS+, FALCON) algorithms
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    libssl-dev \
+    iproute2 \
+    tcpdump \
+    net-tools \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build liboqs (Open Quantum Safe) from source
+RUN git clone --depth 1 --branch 0.11.0 https://github.com/open-quantum-safe/liboqs.git /tmp/liboqs && \
+    cd /tmp/liboqs && \
+    mkdir build && cd build && \
+    cmake -GNinja \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DBUILD_SHARED_LIBS=ON \
+      -DOQS_BUILD_ONLY_LIB=ON \
+      .. && \
+    ninja && ninja install && \
+    ldconfig && \
+    rm -rf /tmp/liboqs
+
+WORKDIR /app
+
+COPY goose_common.h .
+COPY goose_publisher.c .
+
+RUN gcc -O2 -DOQS_ENABLED -o goose_publisher goose_publisher.c \
+    -lssl -lcrypto -loqs -lpthread -lm
+
+# Shared volume for key exchange with subscriber
+VOLUME ["/shared"]
+
+ENTRYPOINT ["./goose_publisher"]
+CMD ["--interface", "eth0", "--algorithm", "RSA-2048", "--duration", "60", "--heartbeat-ms", "1000", "--trip-interval", "30"]
